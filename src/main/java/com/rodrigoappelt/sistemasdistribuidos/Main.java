@@ -1,8 +1,17 @@
 package com.rodrigoappelt.sistemasdistribuidos;
 
+import com.rodrigoappelt.sistemasdistribuidos.gui.ServerChatGui;
+import com.rodrigoappelt.sistemasdistribuidos.interfaces.IServerChat;
+
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import javax.swing.*;
 
 public class Main {
+
+    private static final int RMI_PORT = 2020;
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(Main::showInitialPopup);
     }
@@ -23,8 +32,83 @@ public class Main {
         // Lidando com a escolha
         if (choice == 0) {
             System.out.println("Modo servidor");
+            host();
         } else if (choice == 1) {
             System.out.println("Modo cliente");
+            String ip = showIpPopup();
+            if (ip == null) {
+                System.out.println("Conexão cancelada pelo usuário.");
+                return;
+            }
+            client(ip);
+        }
+    }
+
+    private static Registry initializeRmi(){
+        try {
+            return LocateRegistry.createRegistry(RMI_PORT);
+        }catch (RemoteException e){
+            System.out.println("Nao foi possivel criar a registry RMI :( erro: " + e.getMessage());
+            return null;
+        }
+    }
+
+    private static void host(){
+        Registry registry = initializeRmi();
+        if(registry == null){
+            // mensagem de erro ja printada pro initializeRmi
+            return;
+        }
+
+        ServerChat serverChat = new ServerChat();
+
+        // bind
+        try{
+            registry.rebind("serverChat", serverChat);
+        } catch (RemoteException e) {
+            System.out.println("Erro ao bindar classe a registry RMI: " + e.getMessage());
+            return;
+        }
+
+        System.out.println("Servidor de chat e RMI hospedado com sucesso na porta 2020! :)");
+        SwingUtilities.invokeLater(() -> new ServerChatGui(serverChat));
+    }
+
+    private static String showIpPopup(){
+        JTextField ipField = new JTextField();
+        ipField.setText("localhost");
+        Object[] message = {
+                "Endereço IP do servidor:", ipField
+        };
+
+        int option = JOptionPane.showConfirmDialog(
+                null,
+                message,
+                "Conectar ao Servidor",
+                JOptionPane.OK_CANCEL_OPTION
+        );
+
+        if (option == JOptionPane.OK_OPTION) {
+            return ipField.getText().trim();
+        } else {
+            return null;
+        }
+    }
+
+    private static void client(String ip){
+        final IServerChat serverChat;
+        try {
+            Registry registry = LocateRegistry.getRegistry(ip, RMI_PORT);
+            serverChat = (IServerChat) registry.lookup("serverChat");
+            System.out.println("Conectado ao servidor de chat com sucesso!");
+        } catch (Exception e) {
+            System.out.println("Erro ao conectar ao servidor: " + e.getMessage());
+            return;
+        }
+
+        if(serverChat == null){
+            System.out.println("Objeto do chat nao encontrado no servidor RMI. Qual é a chave usada lá? Aqui é usado 'serverChat'");
+            return;
         }
     }
 }

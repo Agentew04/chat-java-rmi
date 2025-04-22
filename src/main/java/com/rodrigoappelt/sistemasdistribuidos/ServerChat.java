@@ -3,6 +3,7 @@ package com.rodrigoappelt.sistemasdistribuidos;
 import com.rodrigoappelt.sistemasdistribuidos.interfaces.IRoomChat;
 import com.rodrigoappelt.sistemasdistribuidos.interfaces.IServerChat;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,13 +11,13 @@ import java.util.Map;
 /**
  * Implementacao concreta do servidor de chat
  */
-public class ServerChat implements IServerChat {
+public class ServerChat implements IServerChat, Serializable {
 
     private Map<String, IRoomChat> roomList = new HashMap<>();
 
     @Override
     public ArrayList<String> getRooms() {
-        return null;
+        return new ArrayList<>(roomList.keySet());
     }
 
     @Override

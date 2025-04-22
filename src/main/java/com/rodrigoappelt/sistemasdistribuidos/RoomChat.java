@@ -7,6 +7,7 @@ import java.util.Map;
 
 public class RoomChat implements IRoomChat {
 
+    private String roomName;
     private Map<String, IUserChat> userList;
 
     @Override
@@ -26,7 +27,7 @@ public class RoomChat implements IRoomChat {
 
     @Override
     public String getRoomName() {
-        return null;
+        return roomName;
     }
 
     @Override
