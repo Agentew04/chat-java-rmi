@@ -110,5 +110,7 @@ public class Main {
             System.out.println("Objeto do chat nao encontrado no servidor RMI. Qual é a chave usada lá? Aqui é usado 'serverChat'");
             return;
         }
+
+
     }
 }

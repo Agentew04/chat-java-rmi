@@ -29,5 +29,12 @@ public class ServerChat implements IServerChat, Serializable {
             return;
         }
 
+// RFA2: criar sala
+        RoomChat room = new RoomChat(roomName);
+        roomList.put(roomName, room);
+        System.out.println("Sala " + roomName + " criada");
+
+
+
     }
 }

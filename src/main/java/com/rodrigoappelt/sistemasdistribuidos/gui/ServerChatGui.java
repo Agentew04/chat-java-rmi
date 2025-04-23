@@ -89,7 +89,7 @@ public class ServerChatGui extends JFrame {
         setVisible(true);
     }
 
-    private void refreshRooms() {
+    public void refreshRooms() {
         try {
             ArrayList<String> rooms = server.getRooms();
             roomsModel.clear();
@@ -102,24 +102,5 @@ public class ServerChatGui extends JFrame {
     }
 
     private void loadRoomData(String roomName) {
-        // Aqui tu pode buscar mensagens/usuários reais com base no roomName
-        // Por enquanto, é simulação
-        messagesArea.setText("Mensagens da sala " + roomName + ":\n- Hello\n- World");
-        usersModel.clear();
-        usersModel.addElement("User1");
-        usersModel.addElement("User2");
     }
-
-    // main para testar
-    public static void main(String[] args) {
-        try {
-            Registry registry = LocateRegistry.getRegistry("localhost", 1099);
-            IServerChat server = (IServerChat) registry.lookup("ServidorCentral");
-
-            SwingUtilities.invokeLater(() -> new ServerChatGui(server));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
 }
