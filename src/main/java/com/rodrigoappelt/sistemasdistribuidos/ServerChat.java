@@ -29,12 +29,12 @@ public class ServerChat extends UnicastRemoteObject implements IServerChat, Seri
     Registry registry;
 
     @Override
-    public ArrayList<String> getRooms() {
+    public List<String> getRooms() {
         return new ArrayList<>(roomList.keySet());
     }
 
     @Override
-    public void createRoom(String roomName) throws MalformedURLException, RemoteException {
+    public void createRoom(String roomName) throws RemoteException {
         // RFA2: n pode ter sala repetida
         if (roomList.containsKey(roomName)) {
             System.out.println("Sala já existe");

@@ -9,6 +9,7 @@ import java.awt.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ServerChatGui extends JFrame {
     private IServerChat server;
@@ -90,7 +91,7 @@ public class ServerChatGui extends JFrame {
 
     public void refreshRooms() {
         try {
-            ArrayList<String> rooms = server.getRooms();
+            List<String> rooms = server.getRooms();
             roomsModel.clear();
             for (String room : rooms) {
                 roomsModel.addElement(room);
