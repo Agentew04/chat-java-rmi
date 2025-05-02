@@ -4,6 +4,11 @@ import com.rodrigoappelt.sistemasdistribuidos.interfaces.IRoomChat;
 import com.rodrigoappelt.sistemasdistribuidos.interfaces.IServerChat;
 
 import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.rmi.Naming;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,26 +20,33 @@ public class ServerChat implements IServerChat, Serializable {
 
     private Map<String, IRoomChat> roomList = new HashMap<>();
 
+    private static final long serialVersionUID = 5262859443554208822L;
+
+    Registry registry;
+
     @Override
     public ArrayList<String> getRooms() {
         return new ArrayList<>(roomList.keySet());
     }
 
     @Override
-    public void createRoom(String roomName) {
+    public void createRoom(String roomName) throws MalformedURLException, RemoteException {
         // RFA2: n pode ter sala repetida
         if (roomList.containsKey(roomName)) {
             System.out.println("Sala já existe");
             // TODO: jogar excecao
+            try {
+                throw new Exception("Sala já existe");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             return;
         }
 
-// RFA2: criar sala
+        // RFA2: criar sala
         RoomChat room = new RoomChat(roomName);
+        Naming.rebind("rmi://" + "localhost" + ":" + 2020 + "/" + roomName, room);
         roomList.put(roomName, room);
         System.out.println("Sala " + roomName + " criada");
-
-
-
     }
 }

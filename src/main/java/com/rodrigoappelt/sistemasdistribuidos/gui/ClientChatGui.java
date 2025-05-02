@@ -1,11 +1,14 @@
 package com.rodrigoappelt.sistemasdistribuidos.gui;
 
+import com.rodrigoappelt.sistemasdistribuidos.interfaces.IRoomChat;
 import com.rodrigoappelt.sistemasdistribuidos.interfaces.IServerChat;
+import com.rodrigoappelt.sistemasdistribuidos.interfaces.IUserChat;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.registry.Registry;
 
 public class ClientChatGui extends JFrame {
     private IServerChat server;
@@ -14,11 +17,20 @@ public class ClientChatGui extends JFrame {
     private JButton sendButton;
     private DefaultListModel<String> usersModel;
     private JList<String> usersList;
+    private String usrName;
+    private Registry registry;
+    private JComboBox<String> roomsComboBox;
+    private JButton joinRoomButton;
+    private IUserChat userChat;
+    private JButton createRoomButton;
 
-    public ClientChatGui(IServerChat server) {
+    public ClientChatGui(IServerChat server, String usrName, java.util.List<String> rooms, Registry registry, IUserChat userChat) {
         this.server = server;
+        this.usrName = usrName;
+        this.registry = registry;
+        this.userChat = userChat;
 
-        setTitle("Cliente Chat");
+        setTitle("Cliente Chat - Usuario: " + usrName);
         setSize(600, 400);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -42,10 +54,30 @@ public class ClientChatGui extends JFrame {
         JScrollPane usersScroll = new JScrollPane(usersList);
         usersScroll.setBorder(BorderFactory.createTitledBorder("Usuários"));
 
+        // ComboBox para selecionar salas
+        roomsComboBox = new JComboBox<>(rooms.toArray(new String[0]));
+        roomsComboBox.setBorder(BorderFactory.createTitledBorder("Salas Disponíveis"));
+
+        // Botão para entrar na sala
+        joinRoomButton = new JButton("Entrar na Sala");
+        joinRoomButton.addActionListener(e -> joinSelectedRoom());
+
+        // Botão para criar nova sala
+        createRoomButton = new JButton("Criar Nova Sala");
+        createRoomButton.addActionListener(e -> createNewRoom(server));
+
+        // Painel para salas
+        JPanel roomPanel = new JPanel(new BorderLayout());
+        roomPanel.add(roomsComboBox, BorderLayout.CENTER);
+        roomPanel.add(joinRoomButton, BorderLayout.EAST);
+        roomPanel.add(createRoomButton, BorderLayout.SOUTH);
+
         // Adiciona componentes à janela
         add(messagesScroll, BorderLayout.CENTER);
         add(inputPanel, BorderLayout.SOUTH);
         add(usersScroll, BorderLayout.EAST);
+        add(roomsComboBox, BorderLayout.NORTH);
+        add(roomPanel, BorderLayout.WEST);
 
         // Ação do botão enviar
         sendButton.addActionListener(new ActionListener() {
@@ -64,6 +96,37 @@ public class ClientChatGui extends JFrame {
         });
 
         setVisible(true);
+    }
+
+    private void joinSelectedRoom() {
+        String selectedRoom = (String) roomsComboBox.getSelectedItem();
+        if (selectedRoom == null || selectedRoom.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Selecione uma sala válida!", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try {
+            IRoomChat room = (IRoomChat) registry.lookup(selectedRoom);
+
+            room.joinRoom(usrName, userChat);
+            JOptionPane.showMessageDialog(this, "Você entrou na sala: " + selectedRoom, "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Erro ao entrar na sala: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            System.out.println("Erro ao entrar na sala: " + e.getMessage());
+        }
+    }
+
+    private void createNewRoom(IServerChat serverChat) {
+        String roomName = JOptionPane.showInputDialog(this, "Digite o nome da nova sala:", "Criar Nova Sala", JOptionPane.PLAIN_MESSAGE);
+        if (roomName != null && !roomName.trim().isEmpty()) {
+            try {
+                server.createRoom(roomName);
+                roomsComboBox.addItem(roomName);
+                JOptionPane.showMessageDialog(this, "Sala criada com sucesso: " + roomName, "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Erro ao criar sala: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 
     private void sendMessage() {

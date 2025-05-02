@@ -3,9 +3,10 @@ package com.rodrigoappelt.sistemasdistribuidos;
 import com.rodrigoappelt.sistemasdistribuidos.interfaces.IRoomChat;
 import com.rodrigoappelt.sistemasdistribuidos.interfaces.IUserChat;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public class RoomChat implements IRoomChat {
+public class RoomChat implements IRoomChat, Serializable {
 
     private String roomName;
     private Map<String, IUserChat> userList;
@@ -60,5 +61,9 @@ public class RoomChat implements IRoomChat {
 
     public RoomChat(String name){
         this.roomName = name;
+        this.userList = new java.util.HashMap<>();
+
+        System.out.println("Room " + name + " created");
+
     }
 }

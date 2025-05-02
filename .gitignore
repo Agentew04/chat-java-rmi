@@ -36,3 +36,7 @@ build/
 
 ### Mac OS ###
 .DS_Store
+src/out/production/chat-java-rmi/com/rodrigoappelt/sistemasdistribuidos/interfaces/IServerChat.class
+src/out/production/chat-java-rmi/com/rodrigoappelt/sistemasdistribuidos/gui/ClientChatGui$2.class
+*.class
+*.xml

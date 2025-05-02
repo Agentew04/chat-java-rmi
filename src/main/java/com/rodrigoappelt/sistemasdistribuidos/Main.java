@@ -1,5 +1,6 @@
 package com.rodrigoappelt.sistemasdistribuidos;
 
+import com.rodrigoappelt.sistemasdistribuidos.gui.ClientChatGui;
 import com.rodrigoappelt.sistemasdistribuidos.gui.ServerChatGui;
 import com.rodrigoappelt.sistemasdistribuidos.interfaces.IServerChat;
 
@@ -95,22 +96,39 @@ public class Main {
         }
     }
 
-    private static void client(String ip){
+    private static void client(String ip) {
         final IServerChat serverChat;
+
+        UserChat userChat = new UserChat();
+
         try {
             Registry registry = LocateRegistry.getRegistry(ip, RMI_PORT);
             serverChat = (IServerChat) registry.lookup("serverChat");
+
             System.out.println("Conectado ao servidor de chat com sucesso!");
         } catch (Exception e) {
             System.out.println("Erro ao conectar ao servidor: " + e.getMessage());
             return;
         }
 
-        if(serverChat == null){
+        if (serverChat == null) {
             System.out.println("Objeto do chat nao encontrado no servidor RMI. Qual é a chave usada lá? Aqui é usado 'serverChat'");
             return;
         }
 
+        String usrName = JOptionPane.showInputDialog(null, "Digite seu nome de usuário:", "Nome de Usuário", JOptionPane.PLAIN_MESSAGE);
+        if (usrName == null || usrName.trim().isEmpty()) {
+            System.out.println("Conexão cancelada: Nome de usuário inválido.");
+            return;
+        }
+
+        try {
+            Registry registry = LocateRegistry.getRegistry(ip, RMI_PORT);
+            java.util.List<String> rooms = serverChat.getRooms();
+            SwingUtilities.invokeLater(() -> new ClientChatGui(serverChat, usrName, rooms, registry, userChat));
+        } catch (Exception e) {
+            System.out.println("Erro ao obter lista de salas: " + e.getMessage());
+        }
 
     }
 }
