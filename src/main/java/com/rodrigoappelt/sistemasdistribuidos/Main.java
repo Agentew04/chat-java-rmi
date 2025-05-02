@@ -111,6 +111,7 @@ public class Main {
             userChat = new UserChat();
         }catch(RemoteException e){
             System.out.println("fudeu");
+            System.out.println("Erro ao criar UserChat: " + e.getMessage());
             return;
         }
 
