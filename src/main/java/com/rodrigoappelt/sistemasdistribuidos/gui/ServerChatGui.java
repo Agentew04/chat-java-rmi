@@ -21,8 +21,7 @@ public class ServerChatGui extends JFrame {
 
     public ServerChatGui(IServerChat server) {
         this.server = server;
-        System.out.println("A");
-        setTitle("Servidor Chat Admin - v1 brainrot");
+        setTitle("Servidor Chat Admin");
         setSize(800, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());

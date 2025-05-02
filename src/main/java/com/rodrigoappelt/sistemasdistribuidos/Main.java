@@ -61,7 +61,13 @@ public class Main {
             return;
         }
 
-        ServerChat serverChat = new ServerChat();
+        final ServerChat serverChat;
+        try {
+            serverChat = new ServerChat(registry);
+        } catch (RemoteException e) {
+            System.out.println("fudeu");
+            throw new RuntimeException(e);
+        }
 
         // bind
         try{
@@ -73,6 +79,7 @@ public class Main {
 
         System.out.println("Servidor de chat e RMI hospedado com sucesso na porta 2020! :)");
         SwingUtilities.invokeLater(() -> new ServerChatGui(serverChat));
+        System.out.println("aaa");
     }
 
     private static String showIpPopup(){
@@ -99,7 +106,13 @@ public class Main {
     private static void client(String ip) {
         final IServerChat serverChat;
 
-        UserChat userChat = new UserChat();
+        final UserChat userChat;
+        try{
+            userChat = new UserChat();
+        }catch(RemoteException e){
+            System.out.println("fudeu");
+            return;
+        }
 
         try {
             Registry registry = LocateRegistry.getRegistry(ip, RMI_PORT);

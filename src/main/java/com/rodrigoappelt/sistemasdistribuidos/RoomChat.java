@@ -4,9 +4,11 @@ import com.rodrigoappelt.sistemasdistribuidos.interfaces.IRoomChat;
 import com.rodrigoappelt.sistemasdistribuidos.interfaces.IUserChat;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.Map;
 
-public class RoomChat implements IRoomChat, Serializable {
+public class RoomChat extends UnicastRemoteObject implements IRoomChat, Serializable {
 
     private String roomName;
     private Map<String, IUserChat> userList;
@@ -59,7 +61,8 @@ public class RoomChat implements IRoomChat, Serializable {
         userList.clear();
     }
 
-    public RoomChat(String name){
+    public RoomChat(String name) throws RemoteException {
+        super();
         this.roomName = name;
         this.userList = new java.util.HashMap<>();
 

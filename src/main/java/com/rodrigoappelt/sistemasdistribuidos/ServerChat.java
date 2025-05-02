@@ -3,23 +3,27 @@ package com.rodrigoappelt.sistemasdistribuidos;
 import com.rodrigoappelt.sistemasdistribuidos.interfaces.IRoomChat;
 import com.rodrigoappelt.sistemasdistribuidos.interfaces.IServerChat;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Implementacao concreta do servidor de chat
  */
-public class ServerChat implements IServerChat, Serializable {
+public class ServerChat extends UnicastRemoteObject implements IServerChat, Serializable {
 
-    private Map<String, IRoomChat> roomList = new HashMap<>();
+    private final Map<String, IRoomChat> roomList;
 
+    @Serial
     private static final long serialVersionUID = 5262859443554208822L;
 
     Registry registry;
@@ -45,8 +49,14 @@ public class ServerChat implements IServerChat, Serializable {
 
         // RFA2: criar sala
         RoomChat room = new RoomChat(roomName);
-        Naming.rebind("rmi://" + "localhost" + ":" + 2020 + "/" + roomName, room);
+        registry.rebind(roomName, room);
         roomList.put(roomName, room);
         System.out.println("Sala " + roomName + " criada");
+    }
+
+    public ServerChat(Registry registry) throws RemoteException {
+        super();
+        this.roomList = new HashMap<>();
+        this.registry = registry;
     }
 }
