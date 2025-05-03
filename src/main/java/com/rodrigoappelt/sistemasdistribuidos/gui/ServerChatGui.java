@@ -19,6 +19,7 @@ public class ServerChatGui extends JFrame {
     private JTextArea messagesArea;
     private JList<String> usersList;
     private DefaultListModel<String> usersModel;
+    private JButton refreshRoomsButton;
 
     public ServerChatGui(IServerChat server) {
         this.server = server;
@@ -44,12 +45,18 @@ public class ServerChatGui extends JFrame {
         JLabel roomTitle = new JLabel("Sala selecionada");
         JButton closeRoomButton = new JButton("FECHAR");
 
+        JButton refreshRoomButton = new JButton("Atualizar Salas");
+        refreshRoomButton.addActionListener(e -> {refreshRooms();});
+
         topPanel.add(roomTitle, BorderLayout.WEST);
         topPanel.add(closeRoomButton, BorderLayout.EAST);
 
         JPanel rightTop = new JPanel(new GridLayout(1, 2));
         rightTop.add(new JScrollPane(messagesArea));
         rightTop.add(new JScrollPane(usersList));
+
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        buttonPanel.add(refreshRoomButton);
 
         roomPanel.add(topPanel, BorderLayout.NORTH);
         roomPanel.add(rightTop, BorderLayout.CENTER);
@@ -85,6 +92,7 @@ public class ServerChatGui extends JFrame {
         // Monta a GUI
         add(roomsScroll, BorderLayout.WEST);
         add(roomPanel, BorderLayout.CENTER);
+        add(buttonPanel, BorderLayout.SOUTH);
 
         setVisible(true);
     }

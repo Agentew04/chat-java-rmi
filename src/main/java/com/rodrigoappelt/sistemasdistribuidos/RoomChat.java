@@ -14,18 +14,14 @@ public class RoomChat extends UnicastRemoteObject implements IRoomChat, Serializ
     private Map<String, IUserChat> userList;
 
     @Override
-    public void sendMsg(String usrName, String msg) {
-        for (Map.Entry<String, IUserChat> entry : userList.entrySet()) {
-            try {
-                entry.getValue().deliverMsg(usrName, msg);
-            } catch (Exception e) {
-                System.out.println("Error sending message to " + entry.getKey());
-            }
+    public void sendMsg(String senderName, String message) throws RemoteException {
+        for (IUserChat user : userList.values()) {
+            user.deliverMsg(senderName, message); // Notify all clients
         }
     }
 
     @Override
-    public void joinRoom(String userName, IUserChat user) {
+    public void joinRoom(String userName, IUserChat user) throws RemoteException {
         if (userList.containsKey(userName)) {
             System.out.println("User already in the room");
             return;
@@ -35,7 +31,7 @@ public class RoomChat extends UnicastRemoteObject implements IRoomChat, Serializ
     }
 
     @Override
-    public void leaveRoom(String usrName) {
+    public void leaveRoom(String usrName) throws RemoteException {
         if (!userList.containsKey(usrName)) {
             System.out.println("User not in the room");
             return;
@@ -45,12 +41,12 @@ public class RoomChat extends UnicastRemoteObject implements IRoomChat, Serializ
     }
 
     @Override
-    public String getRoomName() {
+    public String getRoomName() throws RemoteException {
         return roomName;
     }
 
     @Override
-    public void closeRoom() {
+    public void closeRoom() throws RemoteException {
         for (Map.Entry<String, IUserChat> entry : userList.entrySet()) {
             try {
                 entry.getValue().deliverMsg("Server", "Room closed");

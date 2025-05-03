@@ -1,5 +1,6 @@
 package com.rodrigoappelt.sistemasdistribuidos.gui;
 
+import com.rodrigoappelt.sistemasdistribuidos.UserChat;
 import com.rodrigoappelt.sistemasdistribuidos.interfaces.IRoomChat;
 import com.rodrigoappelt.sistemasdistribuidos.interfaces.IServerChat;
 import com.rodrigoappelt.sistemasdistribuidos.interfaces.IUserChat;
@@ -8,6 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
 
 public class ClientChatGui extends JFrame {
@@ -23,12 +25,14 @@ public class ClientChatGui extends JFrame {
     private JButton joinRoomButton;
     private IUserChat userChat;
     private JButton createRoomButton;
+    private IRoomChat currentRoom;
+    private JButton leaveRoomButton;
 
-    public ClientChatGui(IServerChat server, String usrName, java.util.List<String> rooms, Registry registry, IUserChat userChat) {
+    public ClientChatGui(IServerChat server, String usrName, java.util.List<String> rooms, Registry registry) throws RemoteException {
         this.server = server;
         this.usrName = usrName;
         this.registry = registry;
-        this.userChat = userChat;
+        this.userChat = new UserChat(this);
 
         setTitle("Cliente Chat - Usuario: " + usrName);
         setSize(600, 400);
@@ -66,11 +70,28 @@ public class ClientChatGui extends JFrame {
         createRoomButton = new JButton("Criar Nova Sala");
         createRoomButton.addActionListener(e -> createNewRoom(server));
 
+        // Botão para sair da sala
+        leaveRoomButton = new JButton("Sair da Sala");
+        leaveRoomButton.addActionListener(e -> {
+            if (currentRoom != null) {
+                try {
+                    currentRoom.leaveRoom(usrName);
+                    currentRoom = null;
+                    JOptionPane.showMessageDialog(this, "Você saiu da sala.", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                } catch (RemoteException ex) {
+                    JOptionPane.showMessageDialog(this, "Erro ao sair da sala: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Você não está em nenhuma sala!", "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
         // Painel para salas
         JPanel roomPanel = new JPanel(new BorderLayout());
         roomPanel.add(roomsComboBox, BorderLayout.CENTER);
         roomPanel.add(joinRoomButton, BorderLayout.EAST);
         roomPanel.add(createRoomButton, BorderLayout.SOUTH);
+        roomPanel.add(leaveRoomButton, BorderLayout.WEST);
 
         // Adiciona componentes à janela
         add(messagesScroll, BorderLayout.CENTER);
@@ -109,6 +130,7 @@ public class ClientChatGui extends JFrame {
             IRoomChat room = (IRoomChat) registry.lookup(selectedRoom);
 
             room.joinRoom(usrName, userChat);
+            currentRoom = room;
             JOptionPane.showMessageDialog(this, "Você entrou na sala: " + selectedRoom, "Sucesso", JOptionPane.INFORMATION_MESSAGE);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Erro ao entrar na sala: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
@@ -132,19 +154,23 @@ public class ClientChatGui extends JFrame {
     private void sendMessage() {
         String message = messageField.getText().trim();
         if (!message.isEmpty()) {
+            if (currentRoom == null) {
+                JOptionPane.showMessageDialog(this, "Você não está em nenhuma sala!", "Erro", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
             try {
-                // Envia a mensagem para o servidor
-                // Exemplo: server.sendMessageToRoom("roomName", message);
-                messagesArea.append("Você: " + message + "\n");
-                messageField.setText("");
+                currentRoom.sendMsg(usrName, message); // Envia a mensagem para a sala atual
+                //messagesArea.append("Você: " + message + "\n");
+                //messageField.setText("");
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Erro ao enviar mensagem: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
 
-    public void receiveMessage(String message) {
-        messagesArea.append(message + "\n");
+    public void receiveMessage(String senderName, String message) {
+        messagesArea.append(senderName + ": " + message + "\n");
     }
 
     public void updateUsersList(String[] users) {

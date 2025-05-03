@@ -106,14 +106,7 @@ public class Main {
     private static void client(String ip) {
         final IServerChat serverChat;
 
-        final UserChat userChat;
-        try{
-            userChat = new UserChat();
-        }catch(RemoteException e){
-            System.out.println("fudeu");
-            System.out.println("Erro ao criar UserChat: " + e.getMessage());
-            return;
-        }
+
 
         try {
             Registry registry = LocateRegistry.getRegistry(ip, RMI_PORT);
@@ -139,7 +132,13 @@ public class Main {
         try {
             Registry registry = LocateRegistry.getRegistry(ip, RMI_PORT);
             java.util.List<String> rooms = serverChat.getRooms();
-            SwingUtilities.invokeLater(() -> new ClientChatGui(serverChat, usrName, rooms, registry, userChat));
+            SwingUtilities.invokeLater(() -> {
+                try {
+                    new ClientChatGui(serverChat, usrName, rooms, registry);
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+            });
         } catch (Exception e) {
             System.out.println("Erro ao obter lista de salas: " + e.getMessage());
         }
