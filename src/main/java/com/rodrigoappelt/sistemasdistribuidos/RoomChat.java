@@ -5,6 +5,7 @@ import com.rodrigoappelt.sistemasdistribuidos.interfaces.IUserChat;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Map;
 
@@ -12,11 +13,16 @@ public class RoomChat extends UnicastRemoteObject implements IRoomChat, Serializ
 
     private String roomName;
     private Map<String, IUserChat> userList;
+    private Registry registry;
 
     @Override
     public void sendMsg(String senderName, String message) throws RemoteException {
-        for (IUserChat user : userList.values()) {
-            user.deliverMsg(senderName, message); // Notify all clients
+        for (Map.Entry<String, IUserChat> entry : userList.entrySet()) {
+            try {
+                entry.getValue().deliverMsg(senderName, message);
+            } catch (Exception e) {
+                System.out.println("Error sending message to user " + entry.getKey());
+            }
         }
     }
 
@@ -49,7 +55,10 @@ public class RoomChat extends UnicastRemoteObject implements IRoomChat, Serializ
     public void closeRoom() throws RemoteException {
         for (Map.Entry<String, IUserChat> entry : userList.entrySet()) {
             try {
-                entry.getValue().deliverMsg("Server", "Room closed");
+                entry.getValue().deliverMsg("Servidor", "Sala fechada pelo servidor");
+                //remover a sala do registry
+                registry.unbind(roomName);
+
             } catch (Exception e) {
                 System.out.println("Error notifying user " + entry.getKey());
             }
@@ -57,10 +66,11 @@ public class RoomChat extends UnicastRemoteObject implements IRoomChat, Serializ
         userList.clear();
     }
 
-    public RoomChat(String name) throws RemoteException {
+    public RoomChat(String name, Registry registry) throws RemoteException {
         super();
         this.roomName = name;
         this.userList = new java.util.HashMap<>();
+        this.registry = registry;
 
         System.out.println("Room " + name + " created");
 

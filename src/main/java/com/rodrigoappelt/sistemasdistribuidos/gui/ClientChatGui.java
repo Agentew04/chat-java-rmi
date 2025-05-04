@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
+import java.util.List;
 
 public class ClientChatGui extends JFrame {
     private IServerChat server;
@@ -27,12 +28,14 @@ public class ClientChatGui extends JFrame {
     private JButton createRoomButton;
     private IRoomChat currentRoom;
     private JButton leaveRoomButton;
+    private List<String> rooms;
 
     public ClientChatGui(IServerChat server, String usrName, java.util.List<String> rooms, Registry registry) throws RemoteException {
         this.server = server;
         this.usrName = usrName;
         this.registry = registry;
         this.userChat = new UserChat(this);
+        this.rooms = rooms;
 
         setTitle("Cliente Chat - Usuario: " + usrName);
         setSize(600, 400);
@@ -60,7 +63,19 @@ public class ClientChatGui extends JFrame {
 
         // ComboBox para selecionar salas
         roomsComboBox = new JComboBox<>(rooms.toArray(new String[0]));
-        roomsComboBox.setBorder(BorderFactory.createTitledBorder("Salas Disponíveis"));
+        roomsComboBox.setBorder(BorderFactory.createTitledBorder("Salas"));
+        roomsComboBox.setSelectedItem(null); // Nenhuma sala selecionada inicialmente
+
+        roomsComboBox.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                try {
+                    refreshRoomList();
+                } catch (RemoteException ex) {
+                    JOptionPane.showMessageDialog(ClientChatGui.this, "Erro ao atualizar lista de salas: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
 
         // Botão para entrar na sala
         joinRoomButton = new JButton("Entrar na Sala");
@@ -161,8 +176,7 @@ public class ClientChatGui extends JFrame {
 
             try {
                 currentRoom.sendMsg(usrName, message); // Envia a mensagem para a sala atual
-                //messagesArea.append("Você: " + message + "\n");
-                //messageField.setText("");
+                messageField.setText(""); // Limpa o campo de entrada
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Erro ao enviar mensagem: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
             }
@@ -171,6 +185,14 @@ public class ClientChatGui extends JFrame {
 
     public void receiveMessage(String senderName, String message) {
         messagesArea.append(senderName + ": " + message + "\n");
+    }
+
+    public void refreshRoomList() throws RemoteException {
+        rooms = server.getRooms(); // Obtém a lista de salas do servidor
+        roomsComboBox.removeAllItems();
+        for (String room : rooms) {
+            roomsComboBox.addItem(room);
+        }
     }
 
     public void updateUsersList(String[] users) {

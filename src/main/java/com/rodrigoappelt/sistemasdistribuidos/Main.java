@@ -71,14 +71,20 @@ public class Main {
 
         // bind
         try{
-            registry.rebind("serverChat", serverChat);
+            registry.rebind("Servidor", serverChat);
         } catch (RemoteException e) {
             System.out.println("Erro ao bindar classe a registry RMI: " + e.getMessage());
             return;
         }
 
         System.out.println("Servidor de chat e RMI hospedado com sucesso na porta 2020! :)");
-        SwingUtilities.invokeLater(() -> new ServerChatGui(serverChat));
+        SwingUtilities.invokeLater(() -> {
+            try {
+                new ServerChatGui(serverChat, registry);
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+        });
         System.out.println("aaa");
     }
 
@@ -105,8 +111,6 @@ public class Main {
 
     private static void client(String ip) {
         final IServerChat serverChat;
-
-
 
         try {
             Registry registry = LocateRegistry.getRegistry(ip, RMI_PORT);
