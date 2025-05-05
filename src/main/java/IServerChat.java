@@ -1,5 +1,3 @@
-package com.rodrigoappelt.sistemasdistribuidos.interfaces;
-
 import java.net.MalformedURLException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;

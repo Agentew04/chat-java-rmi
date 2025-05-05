@@ -1,8 +1,3 @@
-package com.rodrigoappelt.sistemasdistribuidos.gui;
-
-import com.rodrigoappelt.sistemasdistribuidos.ServerChat;
-import com.rodrigoappelt.sistemasdistribuidos.interfaces.IRoomChat;
-import com.rodrigoappelt.sistemasdistribuidos.interfaces.IServerChat;
 
 import javax.swing.*;
 import java.awt.*;

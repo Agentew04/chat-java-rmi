@@ -1,9 +1,3 @@
-package com.rodrigoappelt.sistemasdistribuidos;
-
-import com.rodrigoappelt.sistemasdistribuidos.gui.ClientChatGui;
-import com.rodrigoappelt.sistemasdistribuidos.gui.ServerChatGui;
-import com.rodrigoappelt.sistemasdistribuidos.interfaces.IServerChat;
-
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;

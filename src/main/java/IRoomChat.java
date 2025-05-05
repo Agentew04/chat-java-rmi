@@ -1,5 +1,3 @@
-package com.rodrigoappelt.sistemasdistribuidos.interfaces;
-
 import java.rmi.RemoteException;
 
 /**

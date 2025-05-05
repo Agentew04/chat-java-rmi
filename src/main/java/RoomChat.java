@@ -1,8 +1,3 @@
-package com.rodrigoappelt.sistemasdistribuidos;
-
-import com.rodrigoappelt.sistemasdistribuidos.interfaces.IRoomChat;
-import com.rodrigoappelt.sistemasdistribuidos.interfaces.IUserChat;
-
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;

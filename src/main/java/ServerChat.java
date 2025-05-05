@@ -1,8 +1,3 @@
-package com.rodrigoappelt.sistemasdistribuidos;
-
-import com.rodrigoappelt.sistemasdistribuidos.interfaces.IRoomChat;
-import com.rodrigoappelt.sistemasdistribuidos.interfaces.IServerChat;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.net.MalformedURLException;

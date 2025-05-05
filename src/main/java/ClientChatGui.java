@@ -1,10 +1,3 @@
-package com.rodrigoappelt.sistemasdistribuidos.gui;
-
-import com.rodrigoappelt.sistemasdistribuidos.UserChat;
-import com.rodrigoappelt.sistemasdistribuidos.interfaces.IRoomChat;
-import com.rodrigoappelt.sistemasdistribuidos.interfaces.IServerChat;
-import com.rodrigoappelt.sistemasdistribuidos.interfaces.IUserChat;
-
 import javax.swing.*;
 import javax.swing.event.PopupMenuEvent;
 import java.awt.*;
