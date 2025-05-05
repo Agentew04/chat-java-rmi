@@ -10,6 +10,6 @@ import java.util.List;
  * Interface compartilhada do servidor de chat
  */
 public interface IServerChat extends Remote {
-    List<String> getRooms() throws RemoteException;
+    ArrayList<String> getRooms() throws RemoteException;
     void createRoom(String roomName) throws RemoteException;
 }

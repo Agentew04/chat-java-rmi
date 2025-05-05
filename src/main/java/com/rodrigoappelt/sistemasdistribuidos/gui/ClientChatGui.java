@@ -6,11 +6,13 @@ import com.rodrigoappelt.sistemasdistribuidos.interfaces.IServerChat;
 import com.rodrigoappelt.sistemasdistribuidos.interfaces.IUserChat;
 
 import javax.swing.*;
+import javax.swing.event.PopupMenuEvent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ClientChatGui extends JFrame {
@@ -28,9 +30,9 @@ public class ClientChatGui extends JFrame {
     private JButton createRoomButton;
     private IRoomChat currentRoom;
     private JButton leaveRoomButton;
-    private List<String> rooms;
+    private ArrayList<String> rooms;
 
-    public ClientChatGui(IServerChat server, String usrName, java.util.List<String> rooms, Registry registry) throws RemoteException {
+    public ClientChatGui(IServerChat server, String usrName, ArrayList<String> rooms, Registry registry) throws RemoteException {
         this.server = server;
         this.usrName = usrName;
         this.registry = registry;
@@ -128,6 +130,32 @@ public class ClientChatGui extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 sendMessage();
+            }
+        });
+
+        roomsComboBox.addPopupMenuListener(new javax.swing.event.PopupMenuListener() {
+            @Override
+            public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+                try {
+                    // Obtém as salas disponíveis do servidor
+                    java.util.List<String> rooms = server.getRooms();
+                    roomsComboBox.removeAllItems(); // Limpa as salas existentes
+                    for (String room : rooms) {
+                        roomsComboBox.addItem(room); // Adiciona as salas atualizadas
+                    }
+                } catch (RemoteException ex) {
+                    JOptionPane.showMessageDialog(ClientChatGui.this, "Erro ao atualizar salas: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+
+            @Override
+            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+
+            }
+
+            @Override
+            public void popupMenuCanceled(PopupMenuEvent e) {
+
             }
         });
 

@@ -7,6 +7,7 @@ import com.rodrigoappelt.sistemasdistribuidos.interfaces.IServerChat;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
 import javax.swing.*;
 
 public class Main {
@@ -114,7 +115,7 @@ public class Main {
 
         try {
             Registry registry = LocateRegistry.getRegistry(ip, RMI_PORT);
-            serverChat = (IServerChat) registry.lookup("serverChat");
+            serverChat = (IServerChat) registry.lookup("Servidor");
 
             System.out.println("Conectado ao servidor de chat com sucesso!");
         } catch (Exception e) {
@@ -135,7 +136,7 @@ public class Main {
 
         try {
             Registry registry = LocateRegistry.getRegistry(ip, RMI_PORT);
-            java.util.List<String> rooms = serverChat.getRooms();
+            ArrayList<String> rooms = serverChat.getRooms();
             SwingUtilities.invokeLater(() -> {
                 try {
                     new ClientChatGui(serverChat, usrName, rooms, registry);

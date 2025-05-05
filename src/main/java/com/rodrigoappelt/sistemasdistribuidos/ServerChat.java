@@ -23,13 +23,10 @@ public class ServerChat extends UnicastRemoteObject implements IServerChat, Seri
 
     private final Map<String, IRoomChat> roomList;
 
-    @Serial
-    private static final long serialVersionUID = 5262859443554208822L;
-
     Registry registry;
 
     @Override
-    public List<String> getRooms() {
+    public ArrayList<String> getRooms() {
         return new ArrayList<>(roomList.keySet());
     }
 
