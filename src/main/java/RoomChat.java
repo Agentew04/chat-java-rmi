@@ -2,13 +2,13 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.sql.SQLOutput;
 import java.util.Map;
 
 public class RoomChat extends UnicastRemoteObject implements IRoomChat, Serializable {
 
     private String roomName;
     private Map<String, IUserChat> userList;
-    private Registry registry;
 
     @Override
     public void sendMsg(String senderName, String message) throws RemoteException {
@@ -22,11 +22,12 @@ public class RoomChat extends UnicastRemoteObject implements IRoomChat, Serializ
     }
 
     @Override
-    public void joinRoom(String userName, IUserChat user) throws RemoteException {
+    public synchronized void joinRoom(String userName, IUserChat user) throws RemoteException {
         if (userList.containsKey(userName)) {
             System.out.println("User already in the room");
             return;
         }
+        System.out.println("Joining user " + userName);
         userList.put(userName, user);
         sendMsg(userName, "joined the room");
     }
@@ -52,7 +53,6 @@ public class RoomChat extends UnicastRemoteObject implements IRoomChat, Serializ
             try {
                 entry.getValue().deliverMsg("Servidor", "Sala fechada pelo servidor");
                 //remover a sala do registry
-                registry.unbind(roomName);
 
             } catch (Exception e) {
                 System.out.println("Error notifying user " + entry.getKey());
@@ -65,7 +65,6 @@ public class RoomChat extends UnicastRemoteObject implements IRoomChat, Serializ
         super();
         this.roomName = name;
         this.userList = new java.util.HashMap<>();
-        this.registry = registry;
 
         System.out.println("Room " + name + " created");
 

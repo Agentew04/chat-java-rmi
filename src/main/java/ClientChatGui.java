@@ -3,6 +3,7 @@ import javax.swing.event.PopupMenuEvent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
@@ -163,14 +164,25 @@ public class ClientChatGui extends JFrame {
         }
 
         try {
+            // Verifica se o registro está acessível
+            if (registry == null) {
+                JOptionPane.showMessageDialog(this, "Registro não está acessível!", "Erro", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Tenta localizar a sala no registro
             IRoomChat room = (IRoomChat) registry.lookup(selectedRoom);
 
+            // Entra na sala
             room.joinRoom(usrName, userChat);
             currentRoom = room;
             JOptionPane.showMessageDialog(this, "Você entrou na sala: " + selectedRoom, "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+        } catch (RemoteException e) {
+            JOptionPane.showMessageDialog(this, "Erro remoto ao entrar na sala: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+        } catch (NotBoundException e) {
+            JOptionPane.showMessageDialog(this, "Sala não encontrada no registro: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Erro ao entrar na sala: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-            System.out.println("Erro ao entrar na sala: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Erro inesperado: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
 
