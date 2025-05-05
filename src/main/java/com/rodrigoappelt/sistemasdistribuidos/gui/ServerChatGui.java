@@ -20,8 +20,6 @@ public class ServerChatGui extends JFrame {
     private Map<String, IRoomChat> roomList = new HashMap<>();
     private JPanel roomPanel;
     private JTextArea messagesArea;
-    private JList<String> usersList;
-    private DefaultListModel<String> usersModel;
     private JButton refreshRoomsButton;
     private Registry registry;
 
@@ -42,8 +40,6 @@ public class ServerChatGui extends JFrame {
         roomPanel = new JPanel(new BorderLayout());
         messagesArea = new JTextArea();
         messagesArea.setEditable(false);
-        usersModel = new DefaultListModel<>();
-        usersList = new JList<>(usersModel);
 
         JPanel topPanel = new JPanel(new BorderLayout());
         JLabel roomTitle = new JLabel("Sala selecionada");
@@ -63,7 +59,6 @@ public class ServerChatGui extends JFrame {
 
         JPanel rightTop = new JPanel(new GridLayout(1, 2));
         rightTop.add(new JScrollPane(messagesArea));
-        rightTop.add(new JScrollPane(usersList));
 
         JPanel buttonPanel = new JPanel(new FlowLayout());
         buttonPanel.add(refreshRoomsButton);
@@ -119,7 +114,6 @@ public class ServerChatGui extends JFrame {
         if (selectedRoom != null) {
             try {
                 IRoomChat room = roomList.get(selectedRoom);
-                room.sendMsg("Servidor", "Sala fechada pelo servidor");
                 room.closeRoom();
                 roomList.remove(selectedRoom);
                 refreshRooms();

@@ -15,7 +15,7 @@ public class UserChat extends UnicastRemoteObject implements IUserChat, Serializ
     }
 
     @Override
-    public void deliverMsg(String senderName, String msg) {
+    public void deliverMsg(String senderName, String msg) throws RemoteException {
         System.out.println("Message from " + senderName + ": " + msg);
         // Assuming you have a reference to the ClientChatGui instance
         clientChatGui.receiveMessage(senderName, msg);

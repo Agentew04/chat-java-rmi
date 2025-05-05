@@ -138,7 +138,7 @@ public class ClientChatGui extends JFrame {
             public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
                 try {
                     // Obtém as salas disponíveis do servidor
-                    java.util.List<String> rooms = server.getRooms();
+                    ArrayList<String> rooms = server.getRooms();
                     roomsComboBox.removeAllItems(); // Limpa as salas existentes
                     for (String room : rooms) {
                         roomsComboBox.addItem(room); // Adiciona as salas atualizadas
@@ -211,8 +211,16 @@ public class ClientChatGui extends JFrame {
         }
     }
 
-    public void receiveMessage(String senderName, String message) {
+    public void receiveMessage(String senderName, String message) throws RemoteException {
         messagesArea.append(senderName + ": " + message + "\n");
+
+        if (message != null && message.equals("Sala fechada pelo servidor")) {
+            this.rooms = server.getRooms(); // Obtém a lista de salas do servidor
+            this.roomsComboBox.removeAllItems();
+            for (String room : rooms) {
+                this.roomsComboBox.addItem(room);
+            }
+        }
     }
 
     public void refreshRoomList() throws RemoteException {
