@@ -14,7 +14,6 @@ public class ClientChatGui extends JFrame {
     private JTextArea messagesArea;
     private JTextField messageField;
     private JButton sendButton;
-    private DefaultListModel<String> usersModel;
     private JList<String> usersList;
     private String usrName;
     private Registry registry;
@@ -58,11 +57,6 @@ public class ClientChatGui extends JFrame {
         inputPanel.add(messageField, BorderLayout.CENTER);
         inputPanel.add(sendButton, BorderLayout.EAST);
 
-        // Lista de usuários
-        usersModel = new DefaultListModel<>();
-        usersList = new JList<>(usersModel);
-        JScrollPane usersScroll = new JScrollPane(usersList);
-        usersScroll.setBorder(BorderFactory.createTitledBorder("Usuários"));
 
         // ComboBox para selecionar salas
         roomsComboBox = new JComboBox<>(rooms.toArray(new String[0]));
@@ -114,7 +108,6 @@ public class ClientChatGui extends JFrame {
         // Adiciona componentes à janela
         add(messagesScroll, BorderLayout.CENTER);
         add(inputPanel, BorderLayout.SOUTH);
-        add(usersScroll, BorderLayout.EAST);
         add(roomsComboBox, BorderLayout.NORTH);
         add(roomPanel, BorderLayout.WEST);
 
