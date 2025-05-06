@@ -51,4 +51,14 @@ public class ServerChat extends UnicastRemoteObject implements IServerChat, Seri
         this.roomList = new HashMap<>();
         this.registry = registry;
     }
+
+    public void removeRoomFromServer(IRoomChat room){
+        try {
+            registry.unbind(room.getRoomName());
+            roomList.remove(room.getRoomName());
+            System.out.println("Sala " + room.getRoomName() + " removida do servidor");
+        } catch (Exception e) {
+            System.out.println("Erro ao remover sala do servidor: " + e.getMessage());
+        }
+    }
 }

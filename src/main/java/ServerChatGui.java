@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ServerChatGui extends JFrame {
-    private IServerChat server;
+    private ServerChat server;
     private DefaultComboBoxModel<String> roomsModel;
     private Map<String, IRoomChat> roomList = new HashMap<>();
     private JPanel roomPanel;
@@ -18,7 +18,7 @@ public class ServerChatGui extends JFrame {
     private JButton refreshRoomsButton;
     private Registry registry;
 
-    public ServerChatGui(IServerChat server, Registry registry) throws RemoteException {
+    public ServerChatGui(ServerChat server, Registry registry) throws RemoteException {
         this.server = server;
         this.registry = registry;
         setTitle("Servidor Chat Admin");
@@ -110,6 +110,7 @@ public class ServerChatGui extends JFrame {
             try {
                 IRoomChat room = roomList.get(selectedRoom);
                 room.closeRoom();
+                server.removeRoomFromServer(room);
                 roomList.remove(selectedRoom);
                 refreshRooms();
             } catch (Exception e) {

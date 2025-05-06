@@ -26,6 +26,13 @@ public class ClientChatGui extends JFrame {
     private JButton leaveRoomButton;
     private ArrayList<String> rooms;
 
+    /**
+     * Timer que dispara a cada 5 segundos para atualizar manualmente
+     * a lista de salas pois nao ha notificacao de sala fechada que o
+     * usuario nao esta.
+     */
+    private Timer refreshTimer;
+
     public ClientChatGui(IServerChat server, String usrName, ArrayList<String> rooms, Registry registry) throws RemoteException {
         this.server = server;
         this.usrName = usrName;
@@ -131,12 +138,7 @@ public class ClientChatGui extends JFrame {
             @Override
             public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
                 try {
-                    // Obtém as salas disponíveis do servidor
-                    ArrayList<String> rooms = server.getRooms();
-                    roomsComboBox.removeAllItems(); // Limpa as salas existentes
-                    for (String room : rooms) {
-                        roomsComboBox.addItem(room); // Adiciona as salas atualizadas
-                    }
+                    refreshRoomList();
                 } catch (RemoteException ex) {
                     JOptionPane.showMessageDialog(ClientChatGui.this, "Erro ao atualizar salas: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                 }
@@ -152,6 +154,17 @@ public class ClientChatGui extends JFrame {
 
             }
         });
+
+        // timer de refresh
+        refreshTimer = new Timer(5000, e -> {
+            try {
+                refreshRoomList();
+            } catch (RemoteException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(ClientChatGui.this, "Erro ao atualizar salas: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+        refreshTimer.start();
 
         setVisible(true);
     }
@@ -219,7 +232,8 @@ public class ClientChatGui extends JFrame {
     public void receiveMessage(String senderName, String message) throws RemoteException {
         messagesArea.append(senderName + ": " + message + "\n");
 
-        if (message != null && message.equals("Sala fechada pelo servidor")) {
+        if (message != null && message.equals("Sala fechada pelo servidor")
+            && senderName.equals("Servidor")) {
             this.rooms = server.getRooms(); // Obtém a lista de salas do servidor
             this.roomsComboBox.removeAllItems();
             for (String room : rooms) {
@@ -233,13 +247,6 @@ public class ClientChatGui extends JFrame {
         roomsComboBox.removeAllItems();
         for (String room : rooms) {
             roomsComboBox.addItem(room);
-        }
-    }
-
-    public void updateUsersList(String[] users) {
-        usersModel.clear();
-        for (String user : users) {
-            usersModel.addElement(user);
         }
     }
 }
