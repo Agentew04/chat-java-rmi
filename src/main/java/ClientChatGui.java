@@ -39,6 +39,8 @@ public class ClientChatGui extends JFrame {
         this.userChat = new UserChat(this);
         this.rooms = rooms;
 
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+
         setTitle("Cliente Chat - Usuario: " + usrName);
         setSize(600, 400);
         setDefaultCloseOperation(EXIT_ON_CLOSE);

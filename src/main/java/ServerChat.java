@@ -40,7 +40,7 @@ public class ServerChat extends UnicastRemoteObject implements IServerChat, Seri
         }
 
         // RFA2: criar sala
-        RoomChat room = new RoomChat(roomName, registry);
+        RoomChat room = new RoomChat(roomName);
         registry.rebind(roomName, room);
         roomList.put(roomName, room);
         System.out.println("Sala " + roomName + " criada");

@@ -1,0 +1,97 @@
+# Documentação do Sistema de Chat com Java RMI
+
+## Introdução
+Este projeto implementa um sistema de chat utilizando Java RMI (Remote Method Invocation). Ele permite que usuários se conectem a um servidor, criem salas de chat, enviem mensagens e interajam em tempo real.
+
+---
+
+## Estrutura do Projeto
+
+### Arquivos e Classes
+- **ClientChatGui.java**: Interface gráfica para o cliente do chat.
+- **ServerChatGui.java**: Interface gráfica para o administrador do servidor.
+- **Main.java**: Classe principal que inicializa o sistema.
+- **ServerChat.java**: Implementação do servidor de chat.
+- **RoomChat.java**: Implementação de uma sala de chat.
+- **UserChat.java**: Implementação de um usuário no chat.
+- **IServerChat.java**: Interface remota para o servidor de chat.
+- **IRoomChat.java**: Interface remota para uma sala de chat.
+- **IUserChat.java**: Interface remota para um usuário no chat.
+- **Participantes.txt**: Arquivo de texto com os autores do projeto.
+
+---
+
+## Funcionalidades
+
+### Cliente
+- Conectar-se ao servidor.
+- Criar novas salas de chat.
+- Entrar em salas existentes.
+- Enviar e receber mensagens em tempo real.
+- Sair de salas de chat.
+
+### Servidor
+- Criar e gerenciar salas de chat.
+- Fechar salas de chat.
+- Atualizar a lista de salas disponíveis.
+
+---
+
+## Detalhes das Classes
+
+### `Main.java`
+- Inicializa o sistema e exibe um menu para o usuário escolher entre "Hospedar Servidor" ou "Entrar em Servidor".
+- Configura o registro RMI e instancia o servidor ou cliente conforme a escolha do usuário.
+
+### `ServerChat.java`
+- Implementa a interface `IServerChat`.
+- Gerencia a criação e remoção de salas de chat.
+- Mantém um registro das salas disponíveis.
+
+### `RoomChat.java`
+- Implementa a interface `IRoomChat`.
+- Gerencia os usuários dentro de uma sala.
+- Permite o envio de mensagens para todos os usuários da sala.
+- Notifica os usuários quando alguém entra ou sai da sala.
+
+### `UserChat.java`
+- Implementa a interface `IUserChat`.
+- Representa um usuário no sistema.
+- Recebe mensagens enviadas para o usuário.
+
+### `ClientChatGui.java`
+- Interface gráfica para o cliente.
+- Permite que o usuário visualize mensagens, envie mensagens e gerencie sua participação em salas de chat.
+
+### `ServerChatGui.java`
+- Interface gráfica para o administrador do servidor.
+- Permite gerenciar salas de chat, incluindo a criação, atualização e fechamento de salas.
+
+### Interfaces
+- **`IServerChat`**: Define os métodos remotos para o servidor, como `getRooms` e `createRoom`.
+- **`IRoomChat`**: Define os métodos remotos para uma sala de chat, como `sendMsg`, `joinRoom` e `leaveRoom`.
+- **`IUserChat`**: Define os métodos remotos para um usuário, como `deliverMsg`.
+
+---
+
+## Fluxo de Execução
+
+1. O usuário executa o programa e escolhe entre hospedar o servidor ou conectar-se como cliente.
+2. No modo servidor:
+   - O servidor é inicializado e registrado no RMI Registry.
+   - O administrador pode criar e gerenciar salas de chat.
+3. No modo cliente:
+   - O cliente se conecta ao servidor.
+   - O usuário pode criar ou entrar em salas de chat e enviar mensagens.
+
+---
+
+## Requisitos
+- **Java 8 ou superior**.
+- **Bibliotecas padrão do Java** (não há dependências externas).
+
+---
+
+## Autores
+- Rafael Carneiro Pregardier
+- Rodrigo Appelt

@@ -60,7 +60,6 @@ public class Main {
         try {
             serverChat = new ServerChat(registry);
         } catch (RemoteException e) {
-            System.out.println("fudeu");
             throw new RuntimeException(e);
         }
 

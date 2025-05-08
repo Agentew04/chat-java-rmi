@@ -33,7 +33,7 @@ public class RoomChat extends UnicastRemoteObject implements IRoomChat, Serializ
     }
 
     @Override
-    public void leaveRoom(String usrName) throws RemoteException {
+    public synchronized void leaveRoom(String usrName) throws RemoteException {
         if (!userList.containsKey(usrName)) {
             System.out.println("User not in the room");
             return;
@@ -48,7 +48,7 @@ public class RoomChat extends UnicastRemoteObject implements IRoomChat, Serializ
     }
 
     @Override
-    public void closeRoom() throws RemoteException {
+    public synchronized void closeRoom() throws RemoteException {
         for (Map.Entry<String, IUserChat> entry : userList.entrySet()) {
             try {
                 entry.getValue().deliverMsg("Servidor", "Sala fechada pelo servidor");
@@ -61,7 +61,7 @@ public class RoomChat extends UnicastRemoteObject implements IRoomChat, Serializ
         userList.clear();
     }
 
-    public RoomChat(String name, Registry registry) throws RemoteException {
+    public RoomChat(String name) throws RemoteException {
         super();
         this.roomName = name;
         this.userList = new java.util.HashMap<>();
